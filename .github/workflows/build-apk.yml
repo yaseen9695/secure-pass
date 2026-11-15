@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,3 +38,14 @@ jobs:
         with:
           name: SecurePass-APK
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk SecurePass.apk
+
+      # Publish a public release so the APK has a direct download link
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Secure Pass v1.0.${{ github.run_number }}
+          files: SecurePass.apk
+          make_latest: true
